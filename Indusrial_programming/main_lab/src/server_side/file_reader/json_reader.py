@@ -66,6 +66,9 @@ class FileOperations:
         with rarfile.RarFile(rar_path, 'r') as rar_ref:
             rar_ref.extractall(extract_folder)
 
+def a():
+    pass
+
 
 # Пример использования:
 file_ops = FileOperations()
