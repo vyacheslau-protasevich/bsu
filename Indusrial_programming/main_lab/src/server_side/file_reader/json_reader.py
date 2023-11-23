@@ -1,35 +1,11 @@
 import json
 import xml.etree.ElementTree as ET
 import zipfile
+
 import rarfile
 
-def zip_decorator(func):
-    def wrapper(self, file_path, *args, **kwargs):
-        if file_path.endswith('.zip'):
-            with zipfile.ZipFile(file_path, 'r') as zip_ref:
-                file_list = zip_ref.namelist()
-                if len(file_list) == 1:  # Assume the first file is the one to read
-                    with zip_ref.open(file_list[0]) as file_in_zip:
-                        return func(self, file_in_zip, *args, **kwargs)
-                else:
-                    raise ValueError("Archive must contain exactly one file.")
-        else:
-            return func(self, file_path, *args, **kwargs)
-    return wrapper
+from .archive_decorators import zip_decorator, rar_decorator
 
-def rar_decorator(func):
-    def wrapper(self, file_path, *args, **kwargs):
-        if file_path.endswith('.rar'):
-            with rarfile.RarFile(file_path, 'r') as rar_ref:
-                file_list = rar_ref.namelist()
-                if len(file_list) == 1:  # Assume the first file is the one to read
-                    with rar_ref.open(file_list[0]) as file_in_rar:
-                        return func(self, file_in_rar, *args, **kwargs)
-                else:
-                    raise ValueError("Archive must contain exactly one file.")
-        else:
-            return func(self, file_path, *args, **kwargs)
-    return wrapper
 
 class FileOperations:
     @zip_decorator
@@ -42,7 +18,6 @@ class FileOperations:
             return file.read()
         else:
             raise ValueError("Invalid input. Please provide either a file path or a file object.")
-
 
     @zip_decorator
     @rar_decorator
@@ -91,6 +66,10 @@ class FileOperations:
         with rarfile.RarFile(rar_path, 'r') as rar_ref:
             rar_ref.extractall(extract_folder)
 
+def a():
+    pass
+
+
 # Пример использования:
 file_ops = FileOperations()
 
@@ -98,7 +77,7 @@ file_ops = FileOperations()
 text_content = file_ops.read_text_file('test/file.txt')
 
 # Запись в текстовый файл
-file_ops.write_text_file(file_path='test/out/output.txt', content=text_content)
+file_ops.write_text_file(file_path='../../../tests/filereader_tests/out/output.txt', content=text_content)
 
 # Чтение XML файла
 xml_root = file_ops.read_xml_file('test/file.xml')
